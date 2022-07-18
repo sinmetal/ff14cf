@@ -19,7 +19,7 @@ steps:
       - appserver
       - --region=asia-northeast1
       - --platform=managed
-      - --no-cpu-throttling
+      - --cpu-throttling
       - --service-account=run-default@$PROJECT_ID.iam.gserviceaccount.com
       - --max-instances=3
       - --cpu=1
