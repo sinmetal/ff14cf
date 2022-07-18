@@ -6,7 +6,8 @@ steps:
     args: ['build', '-o', 'app', '.']
   - name: 'gcr.io/kaniko-project/executor:v1.8.1'
     args:
-      - --destination=asia-northeast1-docker.pkg.dev/$PROJECT_ID/app/$BRANCH_NAME:$COMMIT_SHA
+      - --destination=asia-northeast1-docker.pkg.dev/$PROJECT_ID/app/main:$BRANCH_NAME
+      - --destination=asia-northeast1-docker.pkg.dev/$PROJECT_ID/app/main:$COMMIT_SHA
       - --cache=true
       - --cache-ttl=6h
       - --dockerfile=Dockerfile
@@ -27,4 +28,5 @@ steps:
       - --concurrency=16
       - --allow-unauthenticated
       - --timeout=30s
-      - --image=asia-northeast1-docker.pkg.dev/$PROJECT_ID/app/$BRANCH_NAME:$COMMIT_SHA
+      - --image=asia-northeast1-docker.pkg.dev/$PROJECT_ID/app/main:$BRANCH_NAME
+      - --tag=$BRANCH_NAME
