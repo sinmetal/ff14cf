@@ -1,15 +1,26 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/sinmetal/ff14cf"
 )
 
 func main() {
+	ctx := context.Background()
+
 	log.Print("starting server...")
 	http.HandleFunc("/", handler)
+
+	staticContentsHandler, err := ff14cf.NewStaticContentsHandler(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	http.HandleFunc("/register.html", staticContentsHandler.Handler)
 
 	// Determine port for HTTP service.
 	port := os.Getenv("PORT")

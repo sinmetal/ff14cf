@@ -7,10 +7,10 @@ import (
 )
 
 type Content struct {
-	// ID is URLで表示するID
+	// ContentID is URLで表示するID
 	// $ReleaseVolume-Kind-Grade-英語版コンテンツの名前を適当に3文字ぐらいにしたもの
 	// e.g. 極ガルーダ討滅戦 RR-TR-EX-HE
-	ID string
+	ContentID string
 
 	// Name is コンテンツ名
 	Name string
