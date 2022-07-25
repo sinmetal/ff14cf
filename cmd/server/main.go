@@ -7,13 +7,29 @@ import (
 	"net/http"
 	"os"
 
+	"cloud.google.com/go/firestore"
 	"github.com/sinmetal/ff14cf"
+	metadatabox "github.com/sinmetalcraft/gcpbox/metadata"
 )
 
 func main() {
 	ctx := context.Background()
 
 	log.Print("starting server...")
+
+	pID, err := metadatabox.ProjectID()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fs, err := firestore.NewClient(ctx, pID)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	userStore, err := ff14cf.NewUserStore(ctx, fs)
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	staticContentsHandler, err := ff14cf.NewStaticContentsHandler(ctx)
 	if err != nil {
@@ -26,6 +42,12 @@ func main() {
 		log.Fatal(err)
 	}
 	http.HandleFunc("/api/lodestone", loadStoneHandler.Handle)
+
+	registerHandler, err := ff14cf.NewRegisterHandler(ctx, userStore)
+	if err != nil {
+		log.Fatal(err)
+	}
+	http.HandleFunc("/api/register", registerHandler.Handle)
 
 	http.HandleFunc("/", handler)
 	// Determine port for HTTP service.

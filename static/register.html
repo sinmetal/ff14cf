@@ -61,7 +61,7 @@
         button.addEventListener('click', function() {
             let msg = document.querySelector("#lodestoneCheckMessage");
             msg.innerHTML = ""
-            characterID = document.getElementById("lodestoneCharacterID").value;
+            let characterID = document.getElementById("lodestoneCharacterID").value;
             fetch("/api/lodestone?"  + new URLSearchParams({
                     characterID: characterID,
                 }),
@@ -82,12 +82,25 @@
     })();
     (function() {
         let registerButton = document.querySelector('#register');
-
         registerButton.addEventListener('click', function() {
-            console.log("submit");
-            console.log(document.firstName.value);
+            let characterID = document.getElementById("lodestoneCharacterID").value;
+            fetch("/api/register",
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    method: "POST",
+                    body: JSON.stringify({
+                        "characterID":characterID
+                    })
+                })
+                .then(response => response.json())
+                .then(data => {
 
-            //document.myform.submit();
+                })
+                .catch(function(res){
+
+                })
         });
     })();
 </script>
