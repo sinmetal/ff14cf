@@ -25,42 +25,30 @@
 <div class="row">
     <form class="col s12">
         <div class="row">
-            <div class="input-field col s4">
-                <input id="firstName" type="text" class="validate">
-                <label for="firstName">FF14 First Name</label>
-            </div>
-            <div class="input-field col s4">
-                <input id="lastName" type="text" class="validate">
-                <label for="lastName">FF14 Last Name</label>
-            </div>
-        </div>
-        <div class="row">
             <div class="col s12">
                 <div class="input-field inline">
-                    <input id="loadStoneCharacterID" type="email" class="validate">
-                    <label for="loadStoneCharacterID">LoadStoneCharacterID</label>
+                    <input id="lodestoneCharacterID" type="text" required>
+                    <label for="lodestoneCharacterID">LodestoneCharacterID</label>
                     <span class="helper-text" data-error="wrong" data-success="right">https://jp.finalfantasyxiv.com/lodestone/character/{loadStoneCharacterID}/ URLの最後の数字の部分を入力してください</span>
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="input-field col s4">
-                <select id="homeWorld">
-                    <optgroup label="team 1">
-                        <option value="1">Option 1</option>
-                        <option value="2">Option 2</option>
-                    </optgroup>
-                    <optgroup label="team 2">
-                        <option value="3">Option 3</option>
-                        <option value="4">Option 4</option>
-                    </optgroup>
-                </select>
-                <label for="homeWorld">Home World</label>
+                <button id="checkLodestone" class="btn waves-effect waves-light btn-large" type="button">Check Lodestone
+                </button>
             </div>
         </div>
         <div class="row">
             <div class="input-field col s12">
-                <button id="register" class="btn waves-effect waves-light btn-large" type="button">登録
+                <div class="card-panel">
+                    <span class="blue-text text-darken-2" id="lodestoneCheckMessage">lodestoneCharacterIDを入力してCheck Lodestone buttonを押してください</span>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="input-field col s12">
+                <button id="register" class="btn waves-effect waves-light btn-large" type="button" disabled>登録
                     <i class="material-icons right">send</i>
                 </button>
             </div>
@@ -68,6 +56,30 @@
     </form>
 </div>
 <script>
+    (function() {
+        let button = document.querySelector('#checkLodestone');
+        button.addEventListener('click', function() {
+            let msg = document.querySelector("#lodestoneCheckMessage");
+            msg.innerHTML = ""
+            characterID = document.getElementById("lodestoneCharacterID").value;
+            fetch("/api/lodestone?"  + new URLSearchParams({
+                    characterID: characterID,
+                }),
+                {
+                    headers: {
+                    },
+                    method: "GET",
+                })
+                .then(response => response.json())
+                .then(data => {
+                    msg.innerHTML = "ようこそ" + data.firstName + " " + data.lastName + "さん。登録ボタンを押してください。";
+                    document.querySelector("#register").disabled = false;
+                })
+                .catch(function(res){
+                    msg.innerHTML = "Lodestoneからキャラクター情報の取得に失敗しました。IDに誤りがないか確認してください。";
+                })
+        });
+    })();
     (function() {
         let registerButton = document.querySelector('#register');
 

@@ -9,8 +9,8 @@ import (
 	"github.com/dyatlov/go-opengraph/opengraph"
 )
 
-var ErrLodeStoneCharacterNotFound error
-var ErrLodeStoneInvalidFormat error
+var ErrLodeStoneCharacterNotFound = fmt.Errorf("loadstone character notfound")
+var ErrLodeStoneInvalidFormat = fmt.Errorf("loadstone response invalid format")
 
 func GetFF14CharacterNameFromLodeStone(ctx context.Context, characterID string) (firstName string, lastName string, err error) {
 	client := http.DefaultClient

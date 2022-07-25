@@ -14,7 +14,6 @@ func main() {
 	ctx := context.Background()
 
 	log.Print("starting server...")
-	http.HandleFunc("/", handler)
 
 	staticContentsHandler, err := ff14cf.NewStaticContentsHandler(ctx)
 	if err != nil {
@@ -22,6 +21,13 @@ func main() {
 	}
 	http.HandleFunc("/register.html", staticContentsHandler.Handler)
 
+	loadStoneHandler, err := ff14cf.NewLoadStoneHandler(ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+	http.HandleFunc("/api/lodestone", loadStoneHandler.Handle)
+
+	http.HandleFunc("/", handler)
 	// Determine port for HTTP service.
 	port := os.Getenv("PORT")
 	if port == "" {
