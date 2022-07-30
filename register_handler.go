@@ -47,6 +47,7 @@ func (h *RegisterHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	fn, ln, err := GetFF14CharacterNameFromLodeStone(ctx, req.CharacterID)
 	if err != nil {
 		if errors.Is(err, ErrLodeStoneCharacterNotFound) {
+			fmt.Printf("%s is ErrLodeStoneCharacterNotFound.\n", req.CharacterID)
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusNotFound)
 			err := json.NewEncoder(w).Encode(&RegisterErrorResponse{
@@ -55,8 +56,10 @@ func (h *RegisterHandler) Handle(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				// noop
 			}
+			return
 		}
 		if errors.Is(err, ErrLodeStoneInvalidFormat) {
+			fmt.Printf("%s is ErrLodeStoneInvalidFormat.\n", req.CharacterID)
 			w.Header().Set("Content-Type", "application/json; charset=utf-8")
 			w.WriteHeader(http.StatusInternalServerError)
 			err := json.NewEncoder(w).Encode(&RegisterErrorResponse{
@@ -65,7 +68,9 @@ func (h *RegisterHandler) Handle(w http.ResponseWriter, r *http.Request) {
 			if err != nil {
 				// noop
 			}
+			return
 		}
+		fmt.Printf("%s is GetFF14CharacterNameFromLodeStone. %s\n", req.CharacterID, err)
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusInternalServerError)
 		err := json.NewEncoder(w).Encode(&RegisterErrorResponse{
@@ -74,10 +79,12 @@ func (h *RegisterHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			// noop
 		}
+		return
 	}
 
 	viewID, err := h.userStore.NewViewID(ctx, fn, ln)
 	if err != nil {
+		fmt.Printf("failed userStore.NewViewID. characterID:%s :%s\n", req.CharacterID, err)
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusInternalServerError)
 		err := json.NewEncoder(w).Encode(&RegisterErrorResponse{
@@ -98,6 +105,7 @@ func (h *RegisterHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		if status.Code(err) == codes.AlreadyExists {
+			fmt.Printf("User already registered. characterID:%s\n", req.CharacterID, err)
 			w.WriteHeader(http.StatusConflict)
 			err := json.NewEncoder(w).Encode(&RegisterErrorResponse{
 				Message: "",
@@ -107,6 +115,7 @@ func (h *RegisterHandler) Handle(w http.ResponseWriter, r *http.Request) {
 			}
 			return
 		}
+		fmt.Printf("failed userStore.Create. characterID:%s :%s\n", req.CharacterID, err)
 		w.Header().Set("Content-Type", "application/json; charset=utf-8")
 		w.WriteHeader(http.StatusInternalServerError)
 		err := json.NewEncoder(w).Encode(&RegisterErrorResponse{
@@ -115,6 +124,7 @@ func (h *RegisterHandler) Handle(w http.ResponseWriter, r *http.Request) {
 		if err != nil {
 			// noop
 		}
+		return
 	}
 	w.Header().Set("Content-Type", "application/json; charset=utf-8")
 	w.WriteHeader(http.StatusOK)
