@@ -40,6 +40,9 @@ type Content struct {
 	// アライアンスレイドは24人なのか、8人なのか・・・
 	Persons int
 
+	// MinItemLevel 最低平均アイテムレベル
+	MinItemLevel int
+
 	// SearchAlias is 検索に利用するコンテンツ名の別名
 	// e.g. 極ガルーダ討滅戦 -> ガルーダ
 	SearchAlias []string
