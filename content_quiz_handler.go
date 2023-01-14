@@ -51,6 +51,7 @@ func (h *ContentsQuizHandler) Handle(w http.ResponseWriter, r *http.Request) {
 			if err := json.NewEncoder(w).Encode(v); err != nil {
 				fmt.Printf("failed json.NewEncoder : %s\n", err)
 			}
+			return
 		}
 	}
 
