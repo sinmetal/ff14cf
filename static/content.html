@@ -1,42 +1,45 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-    <meta charset="UTF-8">
-    <title>FF14 Content</title>
-    <link href="https://unpkg.com/@primer/css@^20.2.4/dist/primer.css" rel="stylesheet" />
+  <meta charset="UTF-8">
+  <title>FF14 Content</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://unpkg.com/@primer/css@^20.2.4/dist/primer.css" rel="stylesheet" />
 </head>
 <body>
-<div class="Box">
-  <div class="Box-header">
-    <h3 class="Box-title">
-      {{.ContentID}}
-    </h3>
+<div class="container-lg p-3">
+  <div class="Box">
+    <div class="Box-header">
+      <h3 class="Box-title">
+        {{.ContentID}}
+      </h3>
+    </div>
+    <ul>
+      <li class="Box-row">
+        {{.ReleaseVersion}}-{{.ContentKind}}-{{.ContentDifficulty}}
+      </li>
+      <li class="Box-row">
+        必要アイテムレベル:{{.MinItemLevel}}
+      </li>
+      <li class="Box-row">
+        <form>
+          <label for="contentQuizName">コンテンツ名推測</label>
+          <input class="form-control" type="text" id="contentQuizName" />
+          <button class="btn" type="button" id="quizSubmit">Submit</button>
+        </form>
+        入力するのは名前だけでOK。極タイタン討滅戦の場合、タイタン。
+        <div id="quizResult">推測結果がここに表示されます。</div>
+      </li>
+      <li class="Box-row">
+        <details class="details-overlay">
+          <summary class="btn">コンテンツ名を閲覧する</summary>
+          <div class="border p-3 mt-2">
+            {{.ContentName}}
+          </div>
+        </details>
+      </li>
+    </ul>
   </div>
-  <ul>
-    <li class="Box-row">
-      {{.ReleaseVersion}}-{{.ContentKind}}-{{.ContentDifficulty}}
-    </li>
-    <li class="Box-row">
-      必要アイテムレベル:{{.MinItemLevel}}
-    </li>
-    <li class="Box-row">
-      <form>
-        <label for="contentQuizName">コンテンツ名推測</label>
-        <input class="form-control" type="text" id="contentQuizName" />
-        <button class="btn" type="button" id="quizSubmit">Submit</button>
-      </form>
-      入力するのは名前だけでOK。極タイタン討滅戦の場合、タイタン。
-      <div id="quizResult">推測結果がここに表示されます。</div>
-    </li>
-    <li class="Box-row">
-      <details class="details-overlay">
-        <summary class="btn">コンテンツ名を閲覧する</summary>
-        <div class="border p-3 mt-2">
-          {{.ContentName}}
-        </div>
-      </details>
-    </li>
-  </ul>
 </div>
 </body>
 <script>
