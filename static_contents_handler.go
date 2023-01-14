@@ -4,10 +4,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"net/http"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 // ErrDirectory is target path is Directory
@@ -78,6 +79,12 @@ func (h *StaticContentsHandler) Handler(w http.ResponseWriter, r *http.Request) 
 }
 
 func (h *StaticContentsHandler) readFile(path string) ([]byte, error) {
+	l := strings.Split(path, ".")
+	if len(l) < 2 {
+		// 拡張子が存在しない場合、htmlだとみなす
+		path = fmt.Sprintf("%s.html", path)
+	}
+
 	p := fmt.Sprintf("static/%s", path)
 	stat, err := os.Stat(p)
 	if err != nil {
@@ -93,7 +100,7 @@ func (h *StaticContentsHandler) readFile(path string) ([]byte, error) {
 	}
 	defer fp.Close()
 
-	return ioutil.ReadAll(fp)
+	return io.ReadAll(fp)
 }
 
 func (h *StaticContentsHandler) writeIndexHTML(w http.ResponseWriter) {

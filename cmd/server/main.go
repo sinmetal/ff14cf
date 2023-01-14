@@ -26,10 +26,19 @@ func main() {
 		log.Fatal(err)
 	}
 
+	stores := &Stores{}
+
 	userStore, err := ff14cf.NewUserStore(ctx, fs)
 	if err != nil {
 		log.Fatal(err)
 	}
+	stores.UserStore = userStore
+
+	contentStore, err := ff14cf.NewContentStore(ctx, fs)
+	if err != nil {
+		log.Fatal(err)
+	}
+	stores.ContentStore = contentStore
 
 	staticContentsHandler, err := ff14cf.NewStaticContentsHandler(ctx)
 	if err != nil {
@@ -48,6 +57,18 @@ func main() {
 		log.Fatal(err)
 	}
 	http.HandleFunc("/api/register", registerHandler.Handle)
+
+	contentHandler, err := ff14cf.NewContentsHandler(ctx, stores.ContentStore)
+	if err != nil {
+		log.Fatal(err)
+	}
+	http.HandleFunc("/content/", contentHandler.Handle)
+
+	contentsQuizHandler, err := ff14cf.NewContentsQuizHandler(ctx, stores.ContentStore)
+	if err != nil {
+		log.Fatal(err)
+	}
+	http.HandleFunc("/api/content/quiz", contentsQuizHandler.Handle)
 
 	http.HandleFunc("/", handler)
 	// Determine port for HTTP service.
@@ -70,4 +91,9 @@ func handler(w http.ResponseWriter, r *http.Request) {
 		name = "World"
 	}
 	fmt.Fprintf(w, "Hello %s!\n", name)
+}
+
+type Stores struct {
+	UserStore    *ff14cf.UserStore
+	ContentStore *ff14cf.ContentStore
 }
