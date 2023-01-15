@@ -105,7 +105,7 @@ func (h *RegisterHandler) Handle(w http.ResponseWriter, r *http.Request) {
 	})
 	if err != nil {
 		if status.Code(err) == codes.AlreadyExists {
-			fmt.Printf("User already registered. characterID:%s\n", req.CharacterID, err)
+			fmt.Printf("User already registered. characterID:%s %s\n", req.CharacterID, err)
 			w.WriteHeader(http.StatusConflict)
 			err := json.NewEncoder(w).Encode(&RegisterErrorResponse{
 				Message: "",

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>FF14 Content</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://unpkg.com/@primer/css@^20.2.4/dist/primer.css" rel="stylesheet" />
+</head>
+<body>
+<div class="container-lg p-3">
+  <div class="Box">
+    <div class="Box-header">
+      <h3 class="Box-title">
+        {{.ContentID}}
+      </h3>
+    </div>
+    <ul>
+      <li class="Box-row">
+        {{.ReleaseVersion}}-{{.ContentKind}}-{{.ContentDifficulty}}
+      </li>
+      <li class="Box-row">
+        必要アイテムレベル:{{.MinItemLevel}}
+      </li>
+      <li class="Box-row">
+        <form>
+          <label for="contentQuizName">コンテンツ名推測</label>
+          <input class="form-control" type="text" id="contentQuizName" /><br>
+          <button class="btn" type="button" id="quizSubmit">Submit</button>
+        </form>
+        <div class="mt-2">
+          入力するのは名前だけでOK<br>
+          極タイタン討滅戦の場合、タイタン<br>
+        </div>
+        <div id="quizResult"></div>
+      </li>
+      <li class="Box-row">
+        <details class="details-overlay">
+          <summary class="btn">コンテンツ名を閲覧する</summary>
+          <div class="border p-3 mt-2">
+            {{.ContentName}}
+          </div>
+        </details>
+      </li>
+    </ul>
+  </div>
+</div>
+</body>
+<script>
+  (function() {
+    let button = document.querySelector('#quizSubmit');
+    button.addEventListener('click', function() {
+      let contentQuizName = document.getElementById("contentQuizName").value;
+      let msg = document.querySelector("#quizResult");
+      msg.innerHTML = ""
+      fetch("/api/content/quiz",
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: "POST",
+        body: JSON.stringify({
+          "contentID": "{{.ContentID}}",
+          "contentQuizName":contentQuizName
+        })
+      })
+      .then(response => {
+        if (!response.ok) {
+          if (response.status === 404) {
+            msg.innerHTML = "<div class=\"flash mt-3\">" + contentQuizName + " ではありません。</div>";
+            return
+          }
+          msg.innerHTML = "失敗しました。もう一度ボタンを押してみるか、sinmetalに連絡してください。";
+          return
+        }
+        return response.json()
+      })
+      .then(data => {
+        if (!data) {
+          return
+        }
+        console.log(data);
+        msg.innerHTML = "<div class=\"flash mt-3 flash-success\">お察しの通り " + data.name + " です。</div>"
+      })
+      .catch(function(res){
+        msg.innerHTML = "失敗しました。もう一度ボタンを押してみるか、sinmetalに連絡してください。";
+      })
+    });
+  })();
+</script>
+</html>
