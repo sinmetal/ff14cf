@@ -36,6 +36,9 @@ func main() {
 	if err := launcher.RealmRebornTrials(ctx); err != nil {
 		panic(err)
 	}
+	if err := launcher.HeavenswardTrials(ctx); err != nil {
+		panic(err)
+	}
 
 	fmt.Println("Finish")
 }
@@ -46,6 +49,21 @@ type Launcher struct {
 
 func (l *Launcher) RealmRebornTrials(ctx context.Context) error {
 	list := data.RealmRebornTrials()
+	for i, v := range list {
+		_, err := l.ContentStore.Create(ctx, v)
+		if status.Code(err) == codes.AlreadyExists {
+			fmt.Printf("AlreadyExists %d:%s:%s\n", i, v.ContentID, v.Name)
+			continue
+		} else if err != nil {
+			return fmt.Errorf("failed create %d:%s:%s :%w", i, v.ContentID, v.Name, err)
+		}
+		fmt.Printf("Create %d:%s:%s\n", i, v.ContentID, v.Name)
+	}
+	return nil
+}
+
+func (l *Launcher) HeavenswardTrials(ctx context.Context) error {
+	list := data.HeavenswardTrials()
 	for i, v := range list {
 		_, err := l.ContentStore.Create(ctx, v)
 		if status.Code(err) == codes.AlreadyExists {
